@@ -99,3 +99,34 @@ class Admin:
         username = elem.find("Username").text
         email = elem.find("Email").text
         return Admin(id, username, email)
+
+# 4. Клиент
+class Customer:
+    def __init__(self, id, name, email):
+        self.id = id
+        self.name = name
+        self.email = email
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'email': self.email
+        }
+
+    def from_json(js):
+        return Customer(js['id'], js['name'], js['email'])
+
+    def to_xml(self):
+        customer_elem = ET.Element("Customer")
+        ET.SubElement(customer_elem, "Id").text = str(self.id)
+        ET.SubElement(customer_elem, "Name").text = self.name
+        ET.SubElement(customer_elem, "Email").text = self.email
+        return customer_elem
+
+    def from_xml(elem):
+        id = int(elem.find("Id").text)
+        name = elem.find("Name").text
+        email = elem.find("Email").text
+        return Customer(id, name, email)
+
