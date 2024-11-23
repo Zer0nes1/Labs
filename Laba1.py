@@ -158,3 +158,50 @@ class OrderItem:
         product = Product.from_xml(product_elem)
         quantity = int(elem.find("Quantity").text)
         return OrderItem(product, quantity)
+
+ # 6. Заказ
+class Order:
+    def __init__(self, id, customer, items, total_price, status):
+        self.id = id
+        self.customer = customer
+        self.items = items
+        self.total_price = total_price
+        self.status = status
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'customer': self.customer.to_json(),
+            'items': [item.to_json() for item in self.items],
+            'total_price': self.total_price,
+            'status': self.status
+        }
+
+    def from_json(js):
+        id = js['id']
+        customer = Customer.from_json(js['customer'])
+        items = [OrderItem.from_json(item) for item in js['items']]
+        total_price = js['total_price']
+        status = js['status']
+        return Order(id, customer, items, total_price, status)
+
+    def to_xml(self):
+        order_elem = ET.Element("Order")
+        ET.SubElement(order_elem, "Id").text = str(self.id)
+        order_elem.append(self.customer.to_xml())
+        items_elem = ET.SubElement(order_elem, "Items")
+        for item in self.items:
+            items_elem.append(item.to_xml())
+        ET.SubElement(order_elem, "TotalPrice").text = str(self.total_price)
+        ET.SubElement(order_elem, "Status").text = self.status
+        return order_elem
+
+    def from_xml(elem):
+        id = int(elem.find("Id").text)
+        customer_elem = elem.find("Customer")
+        customer = Customer.from_xml(customer_elem)
+        items_elem = elem.find("Items")
+        items = [OrderItem.from_xml(item_elem) for item_elem in items_elem]
+        total_price = float(elem.find("TotalPrice").text)
+        status = elem.find("Status").text
+        return Order(id, customer, items, total_price, status)
