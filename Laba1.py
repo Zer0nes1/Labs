@@ -271,3 +271,41 @@ class Coupon:
         code = elem.find("Code").text
         discount = float(elem.find("Discount").text)
         return Coupon(code, discount)
+
+# 9. Список желаемого
+class Wishlist:
+    def __init__(self, id, customer, products):
+        self.id = id
+        self.customer = customer
+        self.products = products
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'customer': self.customer.to_json(),
+            'products': [product.to_json() for product in self.products]
+        }
+
+    def from_json(js):
+        id = js['id']
+        customer = Customer.from_json(js['customer'])
+        products = [Product.from_json(product) for product in js['products']]
+        return Wishlist(id, customer, products)
+
+    def to_xml(self):
+        wishlist_elem = ET.Element("Wishlist")
+        ET.SubElement(wishlist_elem, "Id").text = str(self.id)
+        wishlist_elem.append(self.customer.to_xml())
+        products_elem = ET.SubElement(wishlist_elem, "Products")
+        for product in self.products:
+            products_elem.append(product.to_xml())
+        return wishlist_elem
+
+    def from_xml(elem):
+        id = int(elem.find("Id").text)
+        customer_elem = elem.find("Customer")
+        customer = Customer.from_xml(customer_elem)
+        products_elem = elem.find("Products")
+        products = [Product.from_xml(product_elem) for product_elem in products_elem]
+        return Wishlist(id, customer, products)
+
