@@ -1,3 +1,5 @@
+import json
+from xml.etree import ElementTree as ET
 # 1. Продукт
 class Product:
     def __init__(self, id, name, description, price, category):
@@ -41,3 +43,29 @@ class Product:
         category_elem = elem.find("Category")
         category = Category.from_xml(category_elem)
         return Product(id, name, description, price, category)
+
+# 2. Категория
+class Category:
+    def __init__(self, id, name):
+        self.id = id
+        self.name = name
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'name': self.name
+        }
+
+    def from_json(js):
+        return Category(js['id'], js['name'])
+
+    def to_xml(self):
+        category_elem = ET.Element("Category")
+        ET.SubElement(category_elem, "Id").text = str(self.id)
+        ET.SubElement(category_elem, "Name").text = self.name
+        return category_elem
+
+    def from_xml(elem):
+        id = int(elem.find("Id").text)
+        name = elem.find("Name").text
+        return Category(id, name)
