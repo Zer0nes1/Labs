@@ -130,3 +130,31 @@ class Customer:
         email = elem.find("Email").text
         return Customer(id, name, email)
 
+# 5. Позиция заказа
+class OrderItem:
+    def __init__(self, product, quantity):
+        self.product = product
+        self.quantity = quantity
+
+    def to_json(self):
+        return {
+            'product': self.product.to_json(),
+            'quantity': self.quantity
+        }
+
+    def from_json(js):
+        product = Product.from_json(js['product'])
+        quantity = js['quantity']
+        return OrderItem(product, quantity)
+
+    def to_xml(self):
+        order_item_elem = ET.Element("OrderItem")
+        order_item_elem.append(self.product.to_xml())
+        ET.SubElement(order_item_elem, "Quantity").text = str(self.quantity)
+        return order_item_elem
+
+    def from_xml(elem):
+        product_elem = elem.find("Product")
+        product = Product.from_xml(product_elem)
+        quantity = int(elem.find("Quantity").text)
+        return OrderItem(product, quantity)
