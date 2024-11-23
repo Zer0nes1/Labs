@@ -205,3 +205,43 @@ class Order:
         total_price = float(elem.find("TotalPrice").text)
         status = elem.find("Status").text
         return Order(id, customer, items, total_price, status)
+
+# 7. Отзывы
+class Feedback:
+    def __init__(self, customer, product, rating, comment):
+        self.customer = customer
+        self.product = product
+        self.rating = rating
+        self.comment = comment
+
+    def to_json(self):
+        return {
+            'customer': self.customer.to_json(),
+            'product': self.product.to_json(),
+            'rating': self.rating,
+            'comment': self.comment
+        }
+
+    def from_json(js):
+        customer = Customer.from_json(js['customer'])
+        product = Product.from_json(js['product'])
+        rating = js['rating']
+        comment = js['comment']
+        return Feedback(customer, product, rating, comment)
+
+    def to_xml(self):
+        feedback_elem = ET.Element("Feedback")
+        feedback_elem.append(self.customer.to_xml())
+        feedback_elem.append(self.product.to_xml())
+        ET.SubElement(feedback_elem, "Rating").text = str(self.rating)
+        ET.SubElement(feedback_elem, "Comment").text = self.comment
+        return feedback_elem
+
+    def from_xml(elem):
+        customer_elem = elem.find("Customer")
+        customer = Customer.from_xml(customer_elem)
+        product_elem = elem.find("Product")
+        product = Product.from_xml(product_elem)
+        rating = int(elem.find("Rating").text)
+        comment = elem.find("Comment").text
+        return Feedback(customer, product, rating, comment)
