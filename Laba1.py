@@ -245,3 +245,29 @@ class Feedback:
         rating = int(elem.find("Rating").text)
         comment = elem.find("Comment").text
         return Feedback(customer, product, rating, comment)
+
+# 8. Купоны
+class Coupon:
+    def __init__(self, code, discount):
+        self.code = code
+        self.discount = discount
+
+    def to_json(self):
+        return {
+            'code': self.code,
+            'discount': self.discount
+        }
+
+    def from_json(js):
+        return Coupon(js['code'], js['discount'])
+
+    def to_xml(self):
+        coupon_elem = ET.Element("Coupon")
+        ET.SubElement(coupon_elem, "Code").text = self.code
+        ET.SubElement(coupon_elem, "Discount").text = str(self.discount)
+        return coupon_elem
+
+    def from_xml(elem):
+        code = elem.find("Code").text
+        discount = float(elem.find("Discount").text)
+        return Coupon(code, discount)
