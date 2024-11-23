@@ -69,3 +69,33 @@ class Category:
         id = int(elem.find("Id").text)
         name = elem.find("Name").text
         return Category(id, name)
+
+# 3. Администратор
+class Admin:
+    def __init__(self, id, username, email):
+        self.id = id
+        self.username = username
+        self.email = email
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email
+        }
+
+    def from_json(js):
+        return Admin(js['id'], js['username'], js['email'])
+
+    def to_xml(self):
+        admin_elem = ET.Element("Admin")
+        ET.SubElement(admin_elem, "Id").text = str(self.id)
+        ET.SubElement(admin_elem, "Username").text = self.username
+        ET.SubElement(admin_elem, "Email").text = self.email
+        return admin_elem
+
+    def from_xml(elem):
+        id = int(elem.find("Id").text)
+        username = elem.find("Username").text
+        email = elem.find("Email").text
+        return Admin(id, username, email)
